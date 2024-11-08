@@ -1,16 +1,24 @@
-'use client'
-import React, { useState } from "react";
+import React from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
-const BlogPost = () => {
-  const [data] = useState({
-    title: "Blog Başlığı",
-    desc: "Bu, blog gönderisinin açıklamasıdır.",
-    img: "/hero.png", // Resim yolu
-    username: "Yazar Adı",
-    content: "Bu, blog gönderisinin içeriğidir. Uzun bir metin içerebilir."
+async function getData(id) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+    // next: { revalidate: 10},  //önbellek ömrü 10 saniye olur. her 10 saniyyede bir verileri dogrular
+    cache: "no-cache", //egerki veri sürekli degişirse önbellekte tutmazsın
   });
+
+  if (!res.ok) {
+    return notFound();
+  }
+
+  return res.json();
+}
+
+const BlogPost = async ({params}) => {
+  const data = await getData(params.id);
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>

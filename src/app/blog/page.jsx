@@ -3,10 +3,25 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
-const Blog = () => {
+async function getData() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts',{
+    next: { revalidate: 10},  //önbellek ömrü 10 saniye olur. her 10 saniyyede bir verileri dogrular
+    // cache: 'no-cache' egerki veri sürekli degişirse önbellekte tutmazsın
+  });
+
+  if(!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  return res.json();
+}
+
+const Blog = async() => {
+  const data = await getData();
   return (
     <div className={styles.mainContainer}>
-      <Link href="testID" className={styles.container}>
+      {data.map((item)=>(
+        <Link href="testID" className={styles.container} key={item.id}>
         <div className={styles.imageContainer}>
           <Image
             src=""
@@ -17,10 +32,12 @@ const Blog = () => {
           />
         </div>
         <div className={styles.content}>
-          <h1 className={styles.title}></h1>
-          <p className={styles.desc}></p>
+          <h1 className={styles.title}>{item.title}</h1>
+          <p className={styles.desc}>{item.body}</p>
         </div>
       </Link>
+      ))}
+      
     </div>
   );
 };
