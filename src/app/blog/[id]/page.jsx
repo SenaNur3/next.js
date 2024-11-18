@@ -4,9 +4,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 async function getData(id) {
-  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-    // next: { revalidate: 10},  //önbellek ömrü 10 saniye olur. her 10 saniyyede bir verileri dogrular
-    cache: "no-cache", //egerki veri sürekli degişirse önbellekte tutmazsın
+  const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -16,7 +15,7 @@ async function getData(id) {
   return res.json();
 }
 
-const BlogPost = async ({params}) => {
+const BlogPost = async ({ params }) => {
   const data = await getData(params.id);
 
   return (
